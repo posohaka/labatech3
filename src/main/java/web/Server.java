@@ -36,6 +36,11 @@ public class Server {
                         System.out.println("lol");
 
                         secondclient = serverSocket.accept();
+
+                        if(firstclient.isClosed()){
+                            System.out.println("pizda");
+                        }
+
                         System.out.println("Второй игрок вошел в игру");
                         inSecond = secondclient.getInputStream();
                         outSecond = secondclient.getOutputStream();
@@ -45,8 +50,16 @@ public class Server {
                             Messege messege = Converter.toMessege(inSecond);
                             Converter.toJSON(outFirst, messege);
                             outFirst.flush();
+                            if(messege.getMess().trim().equals("q")){
+                                System.out.println("second out");
+                                break;
+                            }
                             Messege messege1 = Converter.toMessege(inFirst);
                             Converter.toJSON(outSecond, messege1);
+                            if(messege1.getMess().trim().equals("q")){
+                                System.out.println("first out");
+                                break;
+                            }
                             if (messege1.getMess().equals("=")) {
                                 System.out.println("Игра окончена");
                                 break;
@@ -61,6 +74,7 @@ public class Server {
                         secondclient.close();
                         inSecond.close();
                         outSecond.close();
+                        System.out.println("finally");
                     }
                 }
             } catch (IOException e) {

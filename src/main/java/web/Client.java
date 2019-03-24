@@ -49,18 +49,26 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             Messege str = Converter.toMessege(in);
+            if(str.getMess().equals("q")){
+                System.out.println("Ваш оппонент отключился");
+                break;
+            }
             System.out.println("Второй игрок ввел число " + str.getMess());
             System.out.println("Если ваше число больше введите > . Если ваше число меньше введите < . Если это ваше число, введите = .");
             boolean flag = true;
             String tmp = new String();
             while (flag) {
                  tmp = scanner.nextLine();
-                if (!tmp.equals("<") && !tmp.equals(">") && !tmp.equals("=")) {
+                 tmp = tmp.trim();
+                if (!tmp.equals("<") && !tmp.equals(">") && !tmp.equals("=") && !tmp.equals("q")) {
                     System.out.println("У вас некорректный ввод. Попробуйте еще раз.");
                 }
                 else {
                     flag = false;
                 }
+            }
+            if(tmp.equals("q")){
+                break;
             }
             Converter.toJSON(out, new Messege(tmp));
             out.flush();
@@ -77,17 +85,28 @@ public class Client {
             System.out.println("Введите целое число, которое загадал первый игрок.");
             boolean flag = true;
             String tmp = new String();
+            int a = 0;
+            String finalres = "";
             while (flag) {
                 try {
                     tmp = scanner.nextLine();
-                    int a = Integer.parseInt(tmp);
-                    flag = false;
+                    if(tmp.trim().equals("q")){
+                        finalres = tmp;
+                        flag = false;
+                    }else {
+                        a = Integer.parseInt(tmp.trim());
+                        finalres = String.valueOf(a);
+                        flag = false;
+                    }
                 }
                 catch (Exception e) {
                     System.out.println("Вы ввели некорретные данные, попробуйте еще раз.");
                 }
             }
-            Converter.toJSON(out, new Messege(tmp));
+            Converter.toJSON(out, new Messege(finalres));
+            if(finalres.equals("q")){
+                break;
+            }
             Messege messege = Converter.toMessege(in);
             if (messege.getMess().equals(">"))
             {
@@ -100,6 +119,11 @@ public class Client {
             if (messege.getMess().equals("="))
             {
                 System.out.println("Вы угадали число, поздравляю.");
+                break;
+            }
+            if (messege.getMess().equals("q"))
+            {
+                System.out.println("Ваш оппонент отключился");
                 break;
             }
         }
